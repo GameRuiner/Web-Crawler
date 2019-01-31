@@ -4,11 +4,15 @@ import bs4
 
 
 def site_map(url):
+
+    #help function wich return dictionary with title and set of links
     def aux(url_link):	 
         website_link = urllib.request.urlopen(url_link)
         soup_link = bs4.BeautifulSoup(website_link, "html.parser")
         set_link = set()
         res_link = {}
+        
+        # find all links, choose only http and https
         for link_link in soup_link.findAll('a'):
             link_url_link = link_link.get('href')
             if link_url_link[0] != '#':
@@ -18,6 +22,7 @@ def site_map(url):
                     if parse.scheme == 'http' or parse.scheme == 'https':
                         res[link_url_link] = {}
                         res[link_url_link] = aux(link_url_link)
+              
         title = soup_link.find_all('title')
         if len(title) > 0:
             res_link['title'] = title[0].getText()
@@ -38,6 +43,7 @@ def site_map(url):
                 res[link_url] = aux(link_url)
     return res
 
+# only for test
 if __name__ == "__main__":
     url = 'http://0.0.0.0:8000/'
     s_map = site_map(url)
