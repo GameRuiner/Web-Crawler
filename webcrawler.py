@@ -1,13 +1,16 @@
 import urllib.request
 import urllib.parse
 import bs4
-
+from urlopener import url_open
 
 def site_map(url):
 
     #help function wich return dictionary with title and set of links
     def aux(url_link):	 
-        website_link = urllib.request.urlopen(url_link)
+        print(url_link)
+        website_link = url_open(url_link)
+        if (website_link == "error"):
+            return website_link 
         soup_link = bs4.BeautifulSoup(website_link, "html.parser")
         set_link = set()
         res_link = {}
@@ -15,6 +18,8 @@ def site_map(url):
         # find all links, choose only http and https
         for link_link in soup_link.findAll('a'):
             link_url_link = link_link.get('href')
+            if type(link_url_link) == 'NoneType':
+                continue
             if link_url_link[0] != '#':
                 set_link.add(link_url_link)
                 if link_url_link not in res:
@@ -32,13 +37,12 @@ def site_map(url):
         return res_link
 
     res = {}
-    website = urllib.request.urlopen(url)
+    website = url_open(url)
     soup = bs4.BeautifulSoup(website, "html.parser")
     for link in soup.findAll('a'):
         link_url = link.get('href')
         if link_url[0] != '#':
             parse = urllib.parse.urlparse(link_url)
-            print(parse.scheme)
             if parse.scheme == 'http' or parse.scheme == 'https':
                 res[link_url] = aux(link_url)
     return res
