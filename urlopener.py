@@ -1,6 +1,6 @@
 import urllib.request
 
-
+# function try to open url, in case error return 'error' 
 def url_open(url):
     try: 
         site = urllib.request.urlopen(url)
